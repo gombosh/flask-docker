@@ -1,21 +1,18 @@
 # Use an official Python runtime as a parent image
 FROM python:3.11-slim
 
-# Set environment variables
-ENV PORT=5000
-ENV HOSTNAME=0.0.0.0
-
 # Set the working directory
 WORKDIR /app
 
 # Copy the current directory contents into the container
 COPY . /app
 
+# add execute permission to entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Make port 5000 available to the world outside this container
-EXPOSE $PORT
-
 # Define the command to run your application
-CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
+#CMD ["flask", "run", "--host=$APP_HOST", "--port=$APP_PORT"]
+CMD ["/app/entrypoint.sh"]

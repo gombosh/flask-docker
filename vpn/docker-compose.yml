@@ -31,36 +31,15 @@ services:
       openvpn:
         ipv4_address: 192.168.192.2
 
-  mysql:
-    container_name: research_DB
-    image: mysql:8.0
-    depends_on:
-      - openvpn
-    restart: always
-    environment:
-      - MYSQL_ROOT_PASSWORD=${RESEARCH_DB_ROOT_PASSWORD}
-      - MYSQL_DATABASE=research
-      - MYSQL_USER=${RESEARCH_DB_USER}
-      - MYSQL_PASSWORD=${RESEARCH_DB_PASSWORD}
-    volumes:
-      - research-data:/var/lib/mysql
-    networks:
-      - research_network
-  bookstack:
-    container_name: research
-    image: solidnerd/bookstack:22.10.2
+  salt:
+    container_name: salt
+    image: salt:latest
     depends_on:
       - research_DB
     restart: always
     environment:
-      - DB_HOST=research_DB:3306
-      - DB_DATABASE=research
-      - DB_USERNAME=${RESEARCH_DB_USER}
-      - DB_PASSWORD=${RESEARCH_DB_PASSWORD}
-      - APP_URL=http://192.168.255.1:8080
-    volumes:
-      - uploads:/var/www/bookstack/public/uploads
-      - storage-uploads:/var/www/bookstack/storage/uploads
+      - APP_HOST=<app_hostname>
+      - APP_PORT=<app_port>
     networks:
       research_network:
       openvpn:
