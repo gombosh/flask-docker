@@ -1,0 +1,67 @@
+version: '2'
+networks:
+  openvpn:
+    name: openvpn
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.192.0/20
+          gateway: 192.168.192.1
+  research_network:
+    name: research_network
+volumes:
+  research-data:
+    name: research-data
+  uploads:
+    name: research_uploads
+  storage-uploads:
+    name: research_storage-uploads
+
+services:
+  openvpn:
+    container_name: openvpn_server
+    image: kylemanna/openvpn
+    cap_add:
+     - NET_ADMIN
+    ports:
+     - "4223:1194/udp"
+    volumes:
+     - ./openvpn-data/conf:/etc/openvpn
+    networks:
+      openvpn:
+        ipv4_address: 192.168.192.2
+
+  mysql:
+    container_name: research_DB
+    image: mysql:8.0
+    depends_on:
+      - openvpn
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=${RESEARCH_DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=research
+      - MYSQL_USER=${RESEARCH_DB_USER}
+      - MYSQL_PASSWORD=${RESEARCH_DB_PASSWORD}
+    volumes:
+      - research-data:/var/lib/mysql
+    networks:
+      - research_network
+  bookstack:
+    container_name: research
+    image: solidnerd/bookstack:22.10.2
+    depends_on:
+      - research_DB
+    restart: always
+    environment:
+      - DB_HOST=research_DB:3306
+      - DB_DATABASE=research
+      - DB_USERNAME=${RESEARCH_DB_USER}
+      - DB_PASSWORD=${RESEARCH_DB_PASSWORD}
+      - APP_URL=http://192.168.255.1:8080
+    volumes:
+      - uploads:/var/www/bookstack/public/uploads
+      - storage-uploads:/var/www/bookstack/storage/uploads
+    networks:
+      research_network:
+      openvpn:
+          ipv4_address: 192.168.192.3

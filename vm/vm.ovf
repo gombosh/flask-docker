@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Envelope xmlns="http://schemas.dmtf.org/ovf/envelope/1"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <References>
+    <File ovf:id="ubuntu-22.04.vmdk" ovf:href="ubuntu-22.04.vmdk"/>  <File ovf:id="vm-settings.vmx" ovf:href="vm-settings.vmx"/>  </References>
+
+  <VirtualSystem ovf:id="ubuntuVm" name="Ubuntu 22.04 VM">
+    <Info>A basic Ubuntu 22.04 virtual machine</Info>
+
+    <VirtualHardwareSection>
+      <Info>Hardware configuration for the virtual machine</Info>
+      <SystemBoard ovf:model="Generic">  <Memory ovf:size="2097152" ovf:unit="byte"/>  <Cpu ovf:count="1"/>  </SystemBoard>
+      <Item ovf:required="false" ovf:instance="single">
+        <VirtualHardDisk ovf:capacity="21474836480" ovf:fileRef="ubuntu-22.04.vmdk"/>  </Item>
+    </VirtualHardwareSection>
+
+    <OperatingSystemSection ovf:id="osSection" ovf:osType="linux">
+      <Info>Ubuntu 22.04 operating system configuration</Info>
+      <Config ovf:href="vm-settings.vmx">
+        <Property ovf:key="osVersion">22.04</Property>  </Config>
+    </OperatingSystemSection>
+
+  </VirtualSystem>
+
+</Envelope>

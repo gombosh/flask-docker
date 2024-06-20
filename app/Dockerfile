@@ -1,9 +1,9 @@
 # Use an official Python runtime as a parent image
-FROM python:3.8-slim
+FROM python:3.11-slim
 
 # Set environment variables
 ENV PORT=5000
-ENV HOSTNAME=localhost
+ENV HOSTNAME=0.0.0.0
 
 # Set the working directory
 WORKDIR /app
@@ -18,4 +18,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE $PORT
 
 # Define the command to run your application
-CMD ["python", "app.py"]
+CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
